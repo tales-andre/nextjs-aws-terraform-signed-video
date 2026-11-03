@@ -58,7 +58,12 @@ test("student: the video plays, the copied link works now and gives 403 once it 
   await expect(page).toHaveURL(/\/lessons\/welcome$/);
   await expectVideoPlays(page);
 
-  const url = (await page.getByTestId("signed-url").textContent())!;
+  // Click "Copy video link" and read what landed on the clipboard: that is the link under test.
+  await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.getByRole("button", { name: "Copy video link" }).click();
+  await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
+  const url = await page.evaluate(() => navigator.clipboard.readText());
+  expect(url).toBe(await page.getByTestId("signed-url").textContent());
   expect(url).toMatch(new RegExp(`^${EDGE}/videos/welcome\\.webm\\?Expires=\\d+&Key-Pair-Id=.+&Signature=.+`));
   const expires = Number(new URL(url).searchParams.get("Expires"));
 

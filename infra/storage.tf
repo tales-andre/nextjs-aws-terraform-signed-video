@@ -76,3 +76,18 @@ resource "aws_s3_object" "seed_video" {
   etag         = filemd5("${var.seed_videos_dir}/${each.value}")
   content_type = "video/webm"
 }
+
+# The lesson list, created once from the same seed the local run uses. The app reads it on every
+# page and the admin page rewrites it, so Terraform never overwrites it after the first apply.
+# Creating it here means the app never depends on how S3 answers a GetObject for a missing key
+# (NoSuchKey or AccessDenied, depending on list permissions).
+resource "aws_s3_object" "lesson_list" {
+  bucket       = aws_s3_bucket.videos.id
+  key          = "meta/lessons.json"
+  content      = file("${path.module}/../data/seed-lessons.json")
+  content_type = "application/json"
+
+  lifecycle {
+    ignore_changes = [content, etag]
+  }
+}

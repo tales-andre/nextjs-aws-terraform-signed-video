@@ -36,6 +36,17 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
   return { ...c, privateKey };
 }
 
+/**
+ * Checked once at server start (instrumentation.ts): the video and storage settings above,
+ * plus the Auth.js secret, which Auth.js would otherwise only complain about on the first login.
+ */
+export function checkStartupConfig(env: Record<string, string | undefined> = process.env): void {
+  loadConfig(env);
+  if (!env.NEXTAUTH_SECRET || env.NEXTAUTH_SECRET.length < 16) {
+    throw new Error('Missing or invalid configuration: NEXTAUTH_SECRET (16+ characters). Run "npm run setup" for local defaults.');
+  }
+}
+
 export function config(): AppConfig {
   cached ??= loadConfig();
   return cached;

@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { loadConfig } from "../../lib/config";
+import { checkStartupConfig, loadConfig } from "../../lib/config";
 import { addLesson, getLessons, setPublished, sniffVideoType } from "../../lib/lessons";
 import { localStorage } from "../../lib/storage";
 
@@ -73,7 +73,7 @@ describe("lessons", () => {
 });
 
 describe("config", () => {
-  it("explains what is missing instead of starting half-configured", () => {
+  it("names the missing settings", () => {
     expect(() => loadConfig({})).toThrow(/VIDEO_BASE_URL.*CF_KEY_PAIR_ID/);
     expect(() => loadConfig({ VIDEO_BASE_URL: "http://localhost:4001", CF_KEY_PAIR_ID: "K" })).toThrow(/CF_PRIVATE_KEY/);
   });
@@ -85,5 +85,13 @@ describe("config", () => {
     const c = loadConfig({ VIDEO_BASE_URL: "https://d1.cloudfront.net", CF_KEY_PAIR_ID: "K", CF_PRIVATE_KEY: pem });
     expect(c.privateKey).toContain("\nabc\n");
     expect(c.SIGNED_URL_TTL_SECONDS).toBe(120);
+  });
+  it("the startup check also needs the Auth.js secret", () => {
+    const pem = "-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----";
+    const base = { VIDEO_BASE_URL: "https://d1.cloudfront.net", CF_KEY_PAIR_ID: "K", CF_PRIVATE_KEY: pem };
+    expect(() => checkStartupConfig(base)).toThrow(/NEXTAUTH_SECRET/);
+    expect(() => checkStartupConfig({ ...base, NEXTAUTH_SECRET: "short" })).toThrow(/NEXTAUTH_SECRET/);
+    expect(() => checkStartupConfig({ ...base, NEXTAUTH_SECRET: "a".repeat(32) })).not.toThrow();
+    expect(() => checkStartupConfig({ ...base, VIDEO_BASE_URL: "not-a-url", NEXTAUTH_SECRET: "a".repeat(32) })).toThrow(/VIDEO_BASE_URL/);
   });
 });

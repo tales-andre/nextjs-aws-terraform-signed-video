@@ -8,8 +8,8 @@ import { createRequire } from "node:module";
 import { launchBrowser } from "./browser.mjs";
 
 const VIDEOS = [
-  { file: "welcome.webm", title: "Welcome to Northwind Academy", subtitle: "Lesson 1", color: ["#1f6f78", "#14213d"] },
-  { file: "study-plan.webm", title: "Building a weekly study plan", subtitle: "Lesson 2", color: ["#7c3aed", "#1e1b4b"] },
+  { file: "welcome.webm", title: "Welcome to Northwind Academy", subtitle: "Welcome", color: ["#1f6f78", "#14213d"] },
+  { file: "study-plan.webm", title: "Building a weekly study plan", subtitle: "Study plan", color: ["#7c3aed", "#1e1b4b"] },
   { file: "final-project.webm", title: "Final project brief", subtitle: "Draft lesson", color: ["#b45309", "#422006"] },
 ];
 const SECONDS = 12;

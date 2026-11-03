@@ -111,18 +111,11 @@ resource "aws_iam_role_policy" "task_bucket" {
     Version = "2012-10-17"
     Statement = [
       {
+        # meta/lessons.json is created by Terraform (storage.tf), so no list permission is needed.
         Sid      = "ReadWriteLessons"
         Effect   = "Allow"
         Action   = ["s3:GetObject", "s3:PutObject"]
         Resource = ["${aws_s3_bucket.videos.arn}/videos/*", "${aws_s3_bucket.videos.arn}/meta/*"]
-      },
-      {
-        # Lets a missing meta/lessons.json come back as NoSuchKey instead of AccessDenied.
-        Sid       = "ListMetaPrefix"
-        Effect    = "Allow"
-        Action    = "s3:ListBucket"
-        Resource  = aws_s3_bucket.videos.arn
-        Condition = { StringLike = { "s3:prefix" = ["meta/*"] } }
       },
     ]
   })

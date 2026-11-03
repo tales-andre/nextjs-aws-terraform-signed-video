@@ -114,6 +114,11 @@ run "bucket_is_private_and_only_cloudfront_reads_videos" {
     condition     = length(aws_s3_object.seed_video) == 3
     error_message = "The sample lesson videos should be uploaded."
   }
+
+  assert {
+    condition     = aws_s3_object.lesson_list.key == "meta/lessons.json" && length(jsondecode(aws_s3_object.lesson_list.content)) == 3
+    error_message = "A fresh deploy must start with the lesson list in meta/, so the app never reads a missing key."
+  }
 }
 
 run "videos_need_a_signed_url_and_https" {

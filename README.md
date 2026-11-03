@@ -11,10 +11,14 @@ part is Terraform that is tested offline (see [Limits](#limits)).
 ![Demo: locked lessons, direct file link refused, student logs in, video plays, the same link expires with 403](docs/demo.gif)
 
 *Recorded by `npm run build && npm run record` against the app running locally, with an 8-second link lifetime so the
-expiry fits in the GIF. The two "Request to the video link" panels show real responses from the local
+expiry fits in the GIF. The recording script starts its own copy of the app and the edge on ports 3300 and 4301,
+which is why the screenshots show `localhost:4301` instead of the `4001` that `npm run dev` uses. The two "Request to the video link" panels show real responses from the local
 edge server; the script fetches the link and displays the status and body.*
 
 ## What it shows
+
+In plain words: students log in and watch; a copied link stops working within minutes; new uploads stay
+hidden until you publish them; the AWS setup is code you can rerun.
 
 - **Login and roles** with Auth.js (NextAuth, credentials provider): `student` and `admin`. Logged-out
   visitors see lesson titles only.
@@ -107,6 +111,7 @@ Code map:
 | `edge/server.ts` | Local stand-in for CloudFront + private bucket: 403 unless the URL is signed and fresh |
 | `lib/access.ts` | Who can see, open and manage which lesson (pure functions, unit-tested) |
 | `lib/auth.ts`, `lib/users.ts` | Auth.js config, two demo accounts with passwords from the environment |
+| `instrumentation.ts`, `lib/config.ts` | Settings checked once at server start; the process exits naming what is missing |
 | `app/api/lessons/[id]/url` | Returns a fresh signed link; the player calls it if a link expires mid-lesson |
 | `app/admin/` | Upload and publish, role checked inside each server action |
 | `lib/storage/` | Local folder or S3 for videos and the lesson list |
@@ -137,8 +142,10 @@ What they check:
   are refused; accepted files get a random object name.
 - **End to end (Playwright, real browser):** logged out, the lesson redirects to login, the API returns
   401 and the raw video URL returns 403; a student's video actually plays (the test waits for
-  `currentTime` to advance); the copied link returns 200, then 403 after it expires; a student gets 404
-  for a draft and 403 on the admin page; an admin upload stays hidden from a student until published.
+  `currentTime` to advance); the test clicks "Copy video link", reads the link back from the clipboard,
+  and gets 200, then 403 after it expires; a student gets 404
+  for a draft and 403 on the admin page; an admin upload stays hidden from a student until published; a second copy of the production
+  server started with an invalid `VIDEO_BASE_URL` exits at startup with a message naming it.
 - **Terraform (mocked provider):** bucket fully private and readable only by this distribution under
   `videos/`; `/videos/*` requires the key group and HTTPS; the load balancer accepts only CloudFront's
   prefix list and returns 403 without the secret header; no password, auth secret or signing key in
@@ -200,7 +207,11 @@ repository are set to be deleted with their contents).
   passwords are SSM SecureString parameters injected at container start. Locally, `.env.local` and the
   key pair are git-ignored.
 - **The app cannot delete videos.** Its role can read and write `videos/` and `meta/`, nothing else.
-- **Missing settings stop the app with a clear message** instead of starting half-configured.
+- **A missing or invalid setting stops the server at startup.** `instrumentation.ts` checks the video,
+  storage and Auth.js settings when the process starts and exits with a message that names the variable,
+  so a misconfigured container never passes the load balancer health check while every page fails.
+- **A fresh deploy starts with a lesson list.** Terraform writes `meta/lessons.json` once from the seed
+  list and then leaves it to the app, so the app never has to read a key that does not exist yet.
 
 ## Design decisions and trade-offs
 
