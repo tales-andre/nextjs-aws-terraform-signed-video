@@ -1,0 +1,45 @@
+{
+  "name": "nextjs-aws-terraform-signed-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Open-source demo: Next.js online school with login, roles and lesson videos that only play through short-lived CloudFront-style signed URLs. Terraform for AWS.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.9"
+  },
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "dev": "node scripts/dev.mjs",
+    "build": "next build",
+    "start": "next start",
+    "edge": "tsx edge/server.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:all": "npm run typecheck && npm test && npm run build && npm run test:e2e",
+    "videos": "node scripts/make-sample-videos.mjs",
+    "record": "node scripts/record-demo.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1161.0",
+    "@aws-sdk/cloudfront-signer": "^3.1161.0",
+    "next": "^16.4.4",
+    "next-auth": "^4.24.15",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "fix-webm-duration": "^1.0.6",
+    "gifenc": "^1.0.3",
+    "pngjs": "^7.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.1.0"
+  }
+}

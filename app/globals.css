@@ -1,0 +1,64 @@
+:root {
+  --ink: #14213d;
+  --muted: #5b6577;
+  --line: #dfe3ea;
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --brand: #1f6f78;
+  --brand-ink: #ffffff;
+  --lock: #9a3412;
+  --warn-bg: #fff7ed;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+}
+a { color: var(--brand); }
+.topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 14px 28px; background: var(--ink); color: #fff;
+}
+.brand { color: #fff; text-decoration: none; font-weight: 700; font-size: 20px; letter-spacing: .2px; }
+.brand span { color: #8fd3d9; }
+.who { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+.badge.student { background: #dbeafe; color: #1e3a8a; }
+.badge.admin { background: #fde68a; color: #78350f; }
+.badge.draft { background: #e5e7eb; color: #374151; }
+.btn {
+  display: inline-block; border: 0; border-radius: 8px; padding: 9px 16px; font-size: 15px; font-weight: 600;
+  background: var(--brand); color: var(--brand-ink); cursor: pointer; text-decoration: none; font-family: inherit;
+}
+.btn.ghost { background: transparent; color: #fff; border: 1px solid #ffffff55; }
+.btn.light { background: #e8f3f4; color: var(--brand); }
+.btn.small { padding: 5px 12px; font-size: 14px; }
+main { max-width: 980px; margin: 0 auto; padding: 32px 24px 64px; }
+h1 { font-size: 30px; margin: 0 0 6px; }
+h2 { font-size: 20px; margin: 28px 0 10px; }
+.lead { color: var(--muted); margin: 0 0 24px; }
+.grid { display: grid; gap: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+.lesson-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.lesson-row h3 { margin: 0 0 4px; font-size: 18px; }
+.lesson-row p { margin: 0; color: var(--muted); }
+.locked { color: var(--lock); font-weight: 600; white-space: nowrap; }
+.form { display: grid; gap: 12px; max-width: 460px; }
+.form label { display: grid; gap: 4px; font-weight: 600; font-size: 14px; }
+.form input, .form textarea { font: inherit; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.error { color: #b91c1c; font-weight: 600; margin: 0; }
+.success { color: #166534; font-weight: 600; margin: 0; }
+.hint { color: var(--muted); font-size: 14px; }
+.player video { width: 100%; border-radius: 12px; background: #000; aspect-ratio: 16 / 9; display: block; }
+.linkbox { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
+.linkbox code { font-size: 12px; word-break: break-all; background: #eef1f5; padding: 6px 8px; border-radius: 6px; flex: 1 1 100%; }
+.expiry { font-weight: 600; }
+.expiry.gone { color: var(--lock); }
+.notice { background: var(--warn-bg); border: 1px solid #fed7aa; border-radius: 10px; padding: 12px 16px; margin: 16px 0; }
+table.admin { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); }
+table.admin th, table.admin td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 15px; }
+table.admin th { background: #f1f3f8; font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+.footer { text-align: center; color: var(--muted); font-size: 13px; padding: 24px; }

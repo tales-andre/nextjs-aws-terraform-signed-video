@@ -1,0 +1,23 @@
+[
+  {
+    "id": "welcome",
+    "title": "Welcome to Northwind Academy",
+    "summary": "How the course works and where to find each lesson.",
+    "videoKey": "welcome.webm",
+    "published": true
+  },
+  {
+    "id": "study-plan",
+    "title": "Building a weekly study plan",
+    "summary": "Pick a pace, block the time, and keep it.",
+    "videoKey": "study-plan.webm",
+    "published": true
+  },
+  {
+    "id": "final-project",
+    "title": "Final project brief (draft)",
+    "summary": "Not published yet: only admins can open it.",
+    "videoKey": "final-project.webm",
+    "published": false
+  }
+]

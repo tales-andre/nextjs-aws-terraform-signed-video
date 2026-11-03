@@ -1,0 +1,44 @@
+name: Deploy to AWS (manual)
+
+# Runs only when started by hand, only in the "aws-deploy" environment, and only
+# after `terraform apply` created the role it assumes (see README "Deploy to your AWS account").
+# Repository variables needed: AWS_DEPLOY_ROLE_ARN, AWS_REGION, ECR_REPOSITORY_URL, ECS_CLUSTER, ECS_SERVICE.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # OIDC: short-lived AWS credentials, no stored access keys
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: aws-deploy
+    if: ${{ vars.AWS_DEPLOY_ROLE_ARN != '' }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push the image
+        env:
+          REPO: ${{ vars.ECR_REPOSITORY_URL }}
+        run: |
+          docker build -t "$REPO:${GITHUB_SHA}" -t "$REPO:latest" .
+          docker push "$REPO:${GITHUB_SHA}"
+          docker push "$REPO:latest"
+
+      - name: Restart the service on the new image
+        run: |
+          aws ecs update-service --cluster "${{ vars.ECS_CLUSTER }}" --service "${{ vars.ECS_SERVICE }}" --force-new-deployment > /dev/null
+          aws ecs wait services-stable --cluster "${{ vars.ECS_CLUSTER }}" --services "${{ vars.ECS_SERVICE }}"
