@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   // The Docker image sets NEXT_OUTPUT=standalone (small server bundle); local runs use `next start`.
   output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   poweredByHeader: false,
+  // Do not write an AGENTS.md file into the project on `next dev`.
+  agentRules: false,
   experimental: {
     // Enables forbidden() so the admin page answers a real HTTP 403 to students.
     authInterrupts: true,
