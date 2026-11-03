@@ -1,6 +1,6 @@
 # Private lesson videos with Next.js, signed links and Terraform for AWS
 
-**Typical request we see:** a small online course or membership site wants its lesson videos to play
+**A common request on freelance job boards:** a small online course or membership site wants its lesson videos to play
 only for logged-in students. Today the files sit behind plain links that anyone can copy and share,
 and they want it on AWS, set up as code, with a deploy pipeline they can rerun.
 
