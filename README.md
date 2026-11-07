@@ -158,9 +158,9 @@ Last local run:
 ![End-to-end tests](docs/e2e-test.png)
 ![Terraform tests](docs/terraform-test.png)
 
-The GitHub Actions workflows (`.github/workflows/`) run the same commands plus `terraform fmt -check`,
-`tflint` and a Docker build. They have not run on GitHub yet: this repository was built and tested
-locally (see Limits).
+The CI workflow (`.github/workflows/ci.yml`) runs these same commands on GitHub on every pull request
+and every push to `main`, plus `terraform fmt -check`, `tflint` and a Docker build. The deploy workflow
+runs only when started by hand and has never been run (see Limits).
 
 ## Deploy to your AWS account
 
@@ -241,8 +241,9 @@ repository are set to be deleted with their contents).
   with a mocked provider; no `terraform plan` or `apply` was run against AWS, so account quotas, IAM
   propagation timing and service-side validation were not exercised. The deploy steps above are written
   from the code, not from a recorded run.
-- **The GitHub Actions workflows have not run on GitHub yet**, and `tflint` was not run locally (it is
-  only in the CI workflow).
+- **The deploy workflow has never run.** CI (tests, `terraform test` with the mocked provider, `tflint`,
+  Docker build) runs on GitHub on every pull request and every push to `main`; nothing in it touches an
+  AWS account.
 - The local edge implements canned-policy signed URLs only (`Expires`, `Signature`, `Key-Pair-Id`,
   optional `Hash-Algorithm=SHA256`). Custom policies, signed cookies, IP conditions and CloudFront's
   caching behaviour are not emulated.
